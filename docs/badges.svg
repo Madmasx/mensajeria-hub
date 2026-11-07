@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="34" viewBox="0 0 720 34" fill="none">
+  <g font-family="Inter, 'Segoe UI', sans-serif" font-size="12">
+    <rect x="0" y="3" width="132" height="28" rx="14" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="16" cy="17" r="3.5" fill="#9c6bde"/>
+    <text x="26" y="21.5" fill="#dcd0ef" font-weight="500">Electron 45</text>
+
+    <rect x="142" y="3" width="124" height="28" rx="14" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="158" cy="17" r="3.5" fill="#3178c6"/>
+    <text x="168" y="21.5" fill="#dcd0ef" font-weight="500">TypeScript</text>
+
+    <rect x="276" y="3" width="152" height="28" rx="14" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="292" cy="17" r="3.5" fill="#4cc2ff"/>
+    <text x="302" y="21.5" fill="#dcd0ef" font-weight="500">Wayland · X11</text>
+
+    <rect x="438" y="3" width="150" height="28" rx="14" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="454" cy="17" r="3.5" fill="#f0c674"/>
+    <text x="464" y="21.5" fill="#dcd0ef" font-weight="500">Linux x86_64</text>
+
+    <rect x="598" y="3" width="70" height="28" rx="14" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="614" cy="17" r="3.5" fill="#b7b7b7"/>
+    <text x="624" y="21.5" fill="#dcd0ef" font-weight="500">MIT</text>
+  </g>
+</svg>

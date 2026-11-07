@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a080e"/>
+      <stop offset="0.55" stop-color="#100c17"/>
+      <stop offset="1" stop-color="#1a1027"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientTransform="translate(1010 40) rotate(125) scale(420 320)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9c6bde" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#9c6bde" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientTransform="translate(180 420) rotate(-20) scale(320 240)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25d366" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#25d366" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="202" y1="150" x2="720" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="0.75" stop-color="#e8d8ff"/>
+      <stop offset="1" stop-color="#c49bff"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9c6bde" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#9c6bde" stop-opacity="0.85"/>
+      <stop offset="0.65" stop-color="#229ed9" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#25d366" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" stroke="#251c34" stroke-width="1" opacity="0.55"/>
+    </pattern>
+    <linearGradient id="sidebarFade" x1="800" y1="0" x2="1232" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0c0911"/>
+      <stop offset="0.4" stop-color="#0d0a12"/>
+      <stop offset="1" stop-color="#0e0b14"/>
+    </linearGradient>
+    <clipPath id="win">
+      <rect x="800" y="38" width="432" height="344" rx="18"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1280" height="420" fill="url(#bg)"/>
+  <rect width="1280" height="420" fill="url(#grid)" opacity="0.45"/>
+  <rect width="1280" height="420" fill="url(#glowA)"/>
+  <rect width="1280" height="420" fill="url(#glowB)"/>
+  <rect x="0" y="0" width="1280" height="2" fill="url(#line)"/>
+
+  <!-- small decorative marks -->
+  <circle cx="760" cy="72" r="3" fill="#25d366" opacity="0.8"/>
+  <circle cx="776" cy="72" r="3" fill="#229ed9" opacity="0.8"/>
+  <circle cx="792" cy="72" r="3" fill="#9c6bde" opacity="0.8"/>
+  <path d="M64 396h26M77 383v26" stroke="#2f2440" stroke-width="1.5"/>
+
+  <!-- header chip -->
+  <rect x="64" y="48" width="246" height="30" rx="15" fill="#171120" stroke="#3a2c4f"/>
+  <circle cx="80" cy="63" r="3.5" fill="#9c6bde"/>
+  <text x="92" y="67" font-family="Inter, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="1.6" fill="#b79ad9">OMARCHY · HYPRLAND · WAYLAND</text>
+
+  <!-- icon -->
+  <g transform="translate(64 104) scale(0.4375)">
+    <rect width="256" height="256" rx="56" fill="#0d0f12"/>
+    <rect x="2" y="2" width="252" height="252" rx="54" stroke="#30363d" stroke-width="4"/>
+    <path d="M50 70C50 56.7452 60.7452 46 74 46H182C195.255 46 206 56.7452 206 70V154C206 167.255 195.255 178 182 178H96L58 210V70Z" fill="#171a21" stroke="#9c6bde" stroke-width="10" stroke-linejoin="round"/>
+    <circle cx="95" cy="112" r="14" fill="#25d366"/>
+    <circle cx="128" cy="112" r="14" fill="#9c6bde"/>
+    <circle cx="161" cy="112" r="14" fill="#229ed9"/>
+  </g>
+
+  <!-- title -->
+  <text x="202" y="178" font-family="Inter, 'Segoe UI', sans-serif" font-size="60" font-weight="700" letter-spacing="-1.4" fill="url(#titleGrad)">Mensajería Hub</text>
+  <text x="204" y="220" font-family="Inter, 'Segoe UI', sans-serif" font-size="21" font-weight="500" fill="#ddcff2">Varias cuentas de WhatsApp y Telegram.</text>
+  <text x="204" y="250" font-family="Inter, 'Segoe UI', sans-serif" font-size="19" fill="#a08cba">Una sola ventana. Sesiones totalmente aisladas.</text>
+
+  <!-- feature chips -->
+  <g font-family="Inter, 'Segoe UI', sans-serif">
+    <rect x="202" y="282" width="186" height="32" rx="16" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="219" cy="298" r="3.5" fill="#9c6bde"/>
+    <text x="230" y="302" font-size="12" fill="#d8c9ee">WebContentsView</text>
+
+    <rect x="398" y="282" width="230" height="32" rx="16" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="415" cy="298" r="3.5" fill="#25d366"/>
+    <text x="426" y="302" font-size="12" fill="#d8c9ee">Suspensión inteligente</text>
+
+    <rect x="638" y="282" width="164" height="32" rx="16" fill="#15101e" stroke="#3a2c4f"/>
+    <circle cx="655" cy="298" r="3.5" fill="#229ed9"/>
+    <text x="666" y="302" font-size="12" fill="#d8c9ee">Tema Omarchy</text>
+  </g>
+
+  <!-- footer -->
+  <text x="64" y="394" font-family="'JetBrains Mono', 'DejaVu Sans Mono', monospace" font-size="12" fill="#8f7aa8">github.com/Madmasx/mensajeria-hub</text>
+  <text x="64" y="412" font-family="Inter, 'Segoe UI', sans-serif" font-size="10.5" fill="#4d4062">Electron 45 · Linux x86_64 · MIT</text>
+
+  <!-- mock app window -->
+  <ellipse cx="1016" cy="210" rx="250" ry="180" fill="#9c6bde" opacity="0.07"/>
+  <g clip-path="url(#win)">
+    <rect x="800" y="38" width="432" height="344" fill="url(#sidebarFade)"/>
+    <!-- titlebar -->
+    <rect x="800" y="38" width="432" height="32" fill="#1b1525"/>
+    <circle cx="820" cy="54" r="4" fill="#ff5f57" opacity="0.85"/>
+    <circle cx="836" cy="54" r="4" fill="#febc2e" opacity="0.85"/>
+    <circle cx="852" cy="54" r="4" fill="#28c840" opacity="0.85"/>
+    <text x="1016" y="58" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="10.5" fill="#8d7ba6">Mensajería Hub</text>
+
+    <!-- sidebar -->
+    <rect x="800" y="70" width="152" height="312" fill="#0c0911"/>
+    <line x1="952" y1="70" x2="952" y2="382" stroke="#2a2138"/>
+    <text x="812" y="92" font-family="Inter, 'Segoe UI', sans-serif" font-size="8" font-weight="700" letter-spacing="1.2" fill="#6f608a">GRUPOS</text>
+    <rect x="812" y="102" width="66" height="22" rx="11" fill="#2a1e3e" stroke="#7c4fd0"/>
+    <circle cx="824" cy="113" r="3" fill="#9c6bde"/>
+    <text x="832" y="117" font-family="Inter, 'Segoe UI', sans-serif" font-size="9" font-weight="600" fill="#eadcff">Trabajo</text>
+    <rect x="886" y="102" width="58" height="22" rx="11" fill="#141019" stroke="#33283f"/>
+    <circle cx="898" cy="113" r="3" fill="#10b981"/>
+    <text x="906" y="117" font-family="Inter, 'Segoe UI', sans-serif" font-size="9" fill="#a896bf">Personal</text>
+
+    <text x="812" y="148" font-family="Inter, 'Segoe UI', sans-serif" font-size="8" font-weight="700" letter-spacing="1.2" fill="#6f608a">CUENTAS</text>
+    <rect x="808" y="156" width="136" height="38" rx="8" fill="#241a33" stroke="#3d2c55"/>
+    <circle cx="822" cy="170" r="5" fill="#25d366"/>
+    <text x="834" y="172" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" font-weight="600" fill="#f2e9ff">WhatsApp Trabajo</text>
+    <text x="834" y="183" font-family="Inter, 'Segoe UI', sans-serif" font-size="7" fill="#8f7fa6">Activa</text>
+    <rect x="916" y="164" width="18" height="15" rx="7.5" fill="#9c6bde"/>
+    <text x="925" y="175" text-anchor="middle" font-family="Inter, 'Segoe UI', sans-serif" font-size="8" font-weight="700" fill="#ffffff">3</text>
+
+    <rect x="808" y="200" width="136" height="32" rx="8" fill="#100c17"/>
+    <circle cx="822" cy="216" r="5" fill="#229ed9"/>
+    <text x="834" y="219" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#cbbddf">Telegram Trabajo</text>
+
+    <rect x="808" y="238" width="136" height="40" rx="8" fill="#100c17"/>
+    <circle cx="822" cy="252" r="5" fill="#25d366" opacity="0.55"/>
+    <text x="834" y="255" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#8f7fa6">WhatsApp Personal</text>
+    <text x="834" y="267" font-family="Inter, 'Segoe UI', sans-serif" font-size="7" fill="#f59e0b">Suspendida</text>
+
+    <text x="812" y="364" font-family="Inter, 'Segoe UI', sans-serif" font-size="7.5" fill="#4d4062">3 cuentas · 2 grupos</text>
+
+    <!-- chat header -->
+    <rect x="952" y="70" width="280" height="36" fill="#141019"/>
+    <circle cx="972" cy="88" r="9" fill="#25d366"/>
+    <path d="M969 84c3.2 0 5.6 2.2 5.6 5.2 0 1-.3 1.9-.8 2.7l.7 2.2-2.4-.7c-.8.4-1.7.6-2.7.6-3.1 0-5.6-2.2-5.6-5.1S966 84 969 84Zm-2.6 3.2c-.2.4-.2.9 0 1.4.5 1.2 1.7 2.3 3 2.7.5.2 1 .1 1.4-.1l.8-.4 1.3.4-.4-1.2.3-.7c.4-.7.5-1.4.3-2.1-.2-.9-1.1-1.6-2.3-1.8-.9-.2-1.9-.1-2.7.2-.7.2-1.2.6-1.4 1.1l-.3.5Z" fill="#ffffff"/>
+    <text x="986" y="85" font-family="Inter, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#f2e9ff">WhatsApp Trabajo</text>
+    <text x="986" y="98" font-family="Inter, 'Segoe UI', sans-serif" font-size="7.5" fill="#6f608a">en línea</text>
+
+    <!-- chat -->
+    <rect x="952" y="106" width="280" height="276" fill="#0d0a12"/>
+    <rect x="966" y="126" width="178" height="40" rx="12" fill="#211a2c"/>
+    <text x="978" y="143" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#d9cdea">¿Listo para la reunión?</text>
+    <text x="978" y="157" font-family="Inter, 'Segoe UI', sans-serif" font-size="7" fill="#6f608a">10:41</text>
+
+    <rect x="1058" y="180" width="158" height="38" rx="12" fill="#6d43b8"/>
+    <text x="1070" y="197" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#ffffff">Sí, en 5 minutos</text>
+    <text x="1170" y="209" text-anchor="end" font-family="Inter, 'Segoe UI', sans-serif" font-size="7" fill="#d9c6ff">10:42</text>
+
+    <rect x="966" y="232" width="192" height="34" rx="12" fill="#211a2c"/>
+    <text x="978" y="253" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#d9cdea">Perfecto, te espero.</text>
+
+    <rect x="1088" y="280" width="128" height="32" rx="12" fill="#6d43b8"/>
+    <text x="1100" y="300" font-family="Inter, 'Segoe UI', sans-serif" font-size="8.5" fill="#ffffff">Voy en camino</text>
+
+    <rect x="960" y="332" width="264" height="30" rx="15" fill="#171220" stroke="#2a2138"/>
+    <text x="974" y="351" font-family="Inter, 'Segoe UI', sans-serif" font-size="8" fill="#6f608a">Escribe un mensaje…</text>
+    <circle cx="1208" cy="347" r="10" fill="#9c6bde"/>
+    <path d="m1204 347 7-3.5-2 7.5-1.6-3-3.4-1Z" fill="#ffffff"/>
+  </g>
+
+  <!-- frame + isolation chip -->
+  <rect x="800" y="38" width="432" height="344" rx="18" stroke="#3a2c4f" stroke-width="1.5"/>
+  <rect x="960" y="392" width="272" height="22" rx="11" fill="#120e1a" stroke="#32263f"/>
+  <circle cx="974" cy="403" r="3" fill="#25d366"/>
+  <text x="984" y="407" font-family="'JetBrains Mono', 'DejaVu Sans Mono', monospace" font-size="8.5" fill="#a896bf">sesión aislada · persist:wa-trabajo</text>
+</svg>

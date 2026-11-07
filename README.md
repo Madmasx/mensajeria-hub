@@ -1,4 +1,12 @@
-# Mensajería Hub
+<div align="center">
+  <img src="docs/banner.png" alt="Mensajería Hub: varias cuentas de WhatsApp y Telegram en una sola ventana" width="100%">
+  <br><br>
+  <img src="docs/badges.png" alt="Electron 45 · TypeScript · Wayland y X11 · Linux x86_64 · MIT" width="720">
+</div>
+
+**Varias cuentas de WhatsApp y Telegram. Una sola ventana. Sesiones totalmente aisladas.**
+Grupos de contexto, suspensión inteligente, notificaciones con el nombre de la cuenta y tema
+de Omarchy — sin polling y sin mezclar sesiones.
 
 Aplicación de escritorio para Linux (Arch / Omarchy / Hyprland / Wayland) que reúne varias
 cuentas de **WhatsApp Web** y **Telegram Web** en una sola ventana, separadas en **grupos**
@@ -10,7 +18,13 @@ de contexto (Trabajo, Personal…) con sesiones completamente aisladas.
 
 ---
 
-![Mensajería Hub en Omarchy](docs/captura-app.png)
+## Captura
+
+<p align="center">
+  <img src="docs/captura-app.png" alt="Mensajería Hub ejecutándose con el tema Purple Mad de Omarchy" width="640">
+</p>
+
+---
 
 ## Qué hace
 
@@ -186,6 +200,19 @@ Notas:
   algún proceso auxiliar; pasados unos segundos solo quedan la UI y la cuenta activa. Esto es
   comportamiento de Chromium, no un bucle de la app.
 - Los contadores de no leídos de cuentas suspendidas se conservan hasta que el título cambie.
+
+---
+
+## Arquitectura
+
+<p align="center">
+  <img src="docs/architecture.png" alt="Diagrama: UI, proceso principal, WebContentsView por cuenta y particiones en disco" width="100%">
+</p>
+
+Una única ventana con una **vista activa**; cada cuenta conserva su propio
+`WebContentsView` y su partición `persist:<id>`. Al suspender se cierra la vista (el proceso
+de renderer desaparece) pero la partición sigue en disco, por lo que al reactivar no hay que
+volver a iniciar sesión.
 
 ---
 
