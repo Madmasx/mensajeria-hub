@@ -1,0 +1,65 @@
+{
+  "name": "mensajeria-hub",
+  "version": "1.0.0",
+  "description": "Multi-account WhatsApp and Telegram hub with isolated sessions for Omarchy",
+  "main": "dist/main/index.js",
+  "author": "madmasx",
+  "license": "MIT",
+  "scripts": {
+    "build:main": "node build.js",
+    "build:renderer": "vite build",
+    "build": "node build.js && vite build",
+    "typecheck": "tsc --noEmit",
+    "start": "npm run build && electron .",
+    "smoke": "node scripts/smoke-test.cjs",
+    "dist": "npm run build && electron-builder --linux AppImage",
+    "dist:dir": "npm run build && electron-builder --linux dir"
+  },
+  "build": {
+    "appId": "com.madmasx.mensajeria-hub",
+    "productName": "Mensajeria Hub",
+    "artifactName": "mensajeria-hub-${version}-${arch}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icon.png",
+        "to": "icon.png"
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "dir"
+      ],
+      "category": "Network",
+      "executableName": "mensajeria-hub",
+      "icon": "resources/icon.png",
+      "desktop": {
+        "entry": {
+          "Name": "Mensajería Hub",
+          "Comment": "Multi-account WhatsApp and Telegram hub with isolated sessions",
+          "Categories": "Network;InstantMessaging;Chat;",
+          "StartupWMClass": "mensajeria-hub",
+          "Keywords": "whatsapp;telegram;chat;messaging;"
+        }
+      },
+      "syncDesktopName": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.7.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  },
+  "desktopName": "mensajeria-hub.desktop"
+}

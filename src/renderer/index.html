@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self' file:; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; img-src 'self' data: file:; font-src 'self' file:; connect-src 'self'; object-src 'none'; base-uri 'none';"
+  >
+  <title>Mensajería Hub</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <header class="sidebar-header">
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="3" width="20" height="15" rx="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 18L5 21V18H7Z" fill="currentColor"/>
+            <circle cx="8" cy="10.5" r="1.5" fill="var(--color-accent)"/>
+            <circle cx="12" cy="10.5" r="1.5" fill="var(--color-accent)"/>
+            <circle cx="16" cy="10.5" r="1.5" fill="var(--color-accent)"/>
+          </svg>
+          <span class="brand-title">Mensajería</span>
+        </div>
+        <div class="header-actions">
+          <button id="btn-settings" class="icon-btn" title="Configuración y atajos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="groups-section">
+        <div class="section-label-row">
+          <span class="section-label">GRUPOS</span>
+          <button id="btn-add-group" class="icon-btn-small" title="Crear grupo">+</button>
+        </div>
+        <div id="groups-container" class="groups-list"></div>
+      </div>
+
+      <div class="accounts-section">
+        <div class="section-label-row">
+          <span class="section-label" id="accounts-group-title">CUENTAS</span>
+          <button id="btn-add-account" class="icon-btn-small" title="Añadir cuenta">+</button>
+        </div>
+        <div id="accounts-container" class="accounts-list"></div>
+      </div>
+
+      <footer class="sidebar-footer">
+        <div id="footer-hints" class="footer-hint"></div>
+      </footer>
+    </aside>
+
+    <main id="view-placeholder">
+      <div class="empty-state">
+        <div class="spinner"></div>
+        <p>Iniciando servicio de mensajería…</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: crear/editar grupo -->
+  <dialog id="modal-group" class="modal">
+    <form id="form-group" method="dialog">
+      <h3 id="modal-group-title">Nuevo Grupo</h3>
+      <input type="hidden" id="group-edit-id" value="" />
+      <div class="form-group">
+        <label for="group-name">Nombre:</label>
+        <input type="text" id="group-name" required maxlength="60" placeholder="Ej: Trabajo, Personal" />
+      </div>
+      <div class="form-group">
+        <label for="group-color">Color distintivo:</label>
+        <div class="color-picker-row">
+          <input type="color" id="group-color" value="#3b82f6" />
+          <span id="group-color-hex">#3b82f6</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-group">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal: crear/editar cuenta -->
+  <dialog id="modal-account" class="modal">
+    <form id="form-account" method="dialog">
+      <h3 id="modal-account-title">Añadir Cuenta</h3>
+      <input type="hidden" id="account-edit-id" value="" />
+      <div class="form-group">
+        <label for="account-name">Nombre de la cuenta:</label>
+        <input type="text" id="account-name" required maxlength="80" placeholder="Ej: WhatsApp Trabajo" />
+      </div>
+      <div class="form-group" id="account-service-group">
+        <label for="account-service">Servicio:</label>
+        <select id="account-service">
+          <option value="whatsapp">WhatsApp Web</option>
+          <option value="telegram">Telegram Web (K)</option>
+        </select>
+      </div>
+      <div class="form-group" id="account-group-container">
+        <label for="account-group">Grupo:</label>
+        <select id="account-group"></select>
+      </div>
+      <div class="form-group">
+        <label for="account-url">URL personalizada (opcional):</label>
+        <input type="url" id="account-url" placeholder="https://web.whatsapp.com" />
+      </div>
+      <p class="form-hint">
+        Cada cuenta usa una partición de sesión aislada (<code>persist:&lt;id&gt;</code>). No se guardan
+        credenciales ni tokens fuera de esa sesión.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-account">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-account">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal: ajustes -->
+  <dialog id="modal-settings" class="modal modal-wide">
+    <div class="modal-content">
+      <h3>Configuración de Mensajería Hub</h3>
+      <div class="form-group">
+        <label for="setting-suspend">Suspender cuentas inactivas tras (minutos):</label>
+        <input type="number" id="setting-suspend" min="1" max="120" step="1" value="10" />
+      </div>
+      <div class="form-group-checkbox">
+        <label>
+          <input type="checkbox" id="setting-closetotray" />
+          Minimizar a la bandeja del sistema al cerrar
+        </label>
+      </div>
+      <div class="shortcuts-guide">
+        <h4>Atajos de teclado (configurables en config.json)</h4>
+        <div class="shortcut-item"><span>Cambiar cuenta activa:</span><code id="settings-account-shortcut">Alt + 1..9</code></div>
+        <div class="shortcut-item"><span>Cambiar grupo activo:</span><code id="settings-group-shortcut">Alt + Shift + 1..9</code></div>
+        <div class="shortcut-item"><span>Recorrer cuentas:</span><code id="settings-next-shortcut">Ctrl + Tab</code></div>
+        <div class="shortcut-item"><span>Recorrer cuentas (atrás):</span><code id="settings-prev-shortcut">Ctrl + Shift + Tab</code></div>
+      </div>
+      <div class="settings-info">
+        <div><span class="settings-label">Archivo de configuración:</span> <code id="settings-config-path">config.json</code></div>
+        <div><span class="settings-label">Tema de Omarchy:</span> <span id="settings-theme">—</span></div>
+        <div><span class="settings-label">Versión:</span> <span id="settings-version">—</span></div>
+      </div>
+      <div class="modal-actions modal-actions-split">
+        <button type="button" class="btn btn-secondary" id="btn-open-config">Abrir config.json</button>
+        <button type="button" class="btn btn-primary" id="btn-close-settings">Listo</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: opciones de cuenta / grupo -->
+  <dialog id="modal-menu" class="modal">
+    <div class="modal-content">
+      <h3 id="menu-title">Opciones</h3>
+      <div class="menu-actions-list">
+        <button type="button" class="btn btn-menu" id="menu-btn-edit">Renombrar / Editar</button>
+        <button type="button" class="btn btn-menu" id="menu-btn-move-up">Mover hacia arriba</button>
+        <button type="button" class="btn btn-menu" id="menu-btn-move-down">Mover hacia abajo</button>
+        <button type="button" class="btn btn-menu btn-danger" id="menu-btn-delete">Eliminar</button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-close-menu">Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: confirmar borrado -->
+  <dialog id="modal-confirm" class="modal">
+    <div class="modal-content">
+      <h3 id="confirm-title">Confirmar eliminación</h3>
+      <p id="confirm-message">¿Estás seguro? Se eliminará la sesión aislada en disco.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="btn-confirm-cancel">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btn-confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Dependencias y artefactos de build
+node_modules/
+dist/
+release/
+*.log
+*.tmp
+.DS_Store
+
+# Sesiones/cookies de Electron: NUNCA se versionan.
+# Viven en ~/.config/mensajeria-hub (fuera del repo), pero se excluyen igual
+# por si alguien copia esa carpeta dentro del proyecto.
+.config/
+user-data/
+Partitions/
+**/Cookies
+**/Cookies-journal
+**/Local Storage/
+**/Session Storage/
+**/IndexedDB/
+**/Cache/
+**/Code Cache/
+**/GPUCache/
+**/blob_storage/
+**/*.cookies
+**/*.sqlite
+**/*.db
+config.json
