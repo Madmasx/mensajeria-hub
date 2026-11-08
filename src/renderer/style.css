@@ -686,3 +686,66 @@ body {
 .toast.success {
   border-color: var(--color-accent);
 }
+
+/* Editable keyboard shortcuts (Ajustes) */
+.shortcut-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shortcut-edit label {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.shortcut-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcut-input {
+  flex: 1;
+  width: 100%;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-fg);
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+  outline: none;
+}
+
+.shortcut-input:focus {
+  border-color: var(--color-accent);
+}
+
+.shortcut-suffix {
+  font-size: 10px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.shortcut-preview {
+  font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--color-accent);
+  background-color: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  padding: 7px 9px;
+  word-break: break-word;
+}
+
+.shortcut-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.shortcut-actions .btn {
+  font-size: 11px;
+  padding: 5px 10px;
+}

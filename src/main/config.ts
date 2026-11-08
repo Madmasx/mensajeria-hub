@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { randomUUID } from 'crypto';
+import { DEFAULT_SHORTCUTS, sanitizeShortcuts, type ShortcutsConfig } from './shortcuts';
+
+export type { ShortcutsConfig } from './shortcuts';
 
 export type Service = 'whatsapp' | 'telegram';
 
@@ -17,18 +20,6 @@ export interface GroupConfig {
   name: string;
   color: string;
   accounts: string[];
-}
-
-/**
- * Shortcut grammar: modifiers joined with `+` (`Alt`, `Ctrl`, `Shift`, `Super`).
- * `accountPrefix` / `groupPrefix` only use modifiers; the digit is appended at
- * runtime (Alt+1..9). `nextAccount` / `prevAccount` need a key too.
- */
-export interface ShortcutsConfig {
-  accountPrefix: string;
-  groupPrefix: string;
-  nextAccount: string;
-  prevAccount: string;
 }
 
 export interface AppConfig {
@@ -85,12 +76,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   activeAccount: 'wa-trabajo',
   suspendAfterMinutes: 10,
   closeToTray: true,
-  shortcuts: {
-    accountPrefix: 'Alt',
-    groupPrefix: 'Alt+Shift',
-    nextAccount: 'Ctrl+Tab',
-    prevAccount: 'Ctrl+Shift+Tab'
-  }
+  shortcuts: { ...DEFAULT_SHORTCUTS }
 };
 
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
@@ -262,13 +248,8 @@ export function normalizeConfig(raw: unknown): AppConfig {
 
   const rawShortcuts =
     src.shortcuts && typeof src.shortcuts === 'object' && !Array.isArray(src.shortcuts)
-      ? (src.shortcuts as Record<string, unknown>)
-      : {};
-
-  const shortcut = (key: keyof ShortcutsConfig, fallback: string): string => {
-    const value = asString(rawShortcuts[key]).trim();
-    return value && value.length <= 40 ? value : fallback;
-  };
+      ? (src.shortcuts as Partial<ShortcutsConfig>)
+      : undefined;
 
   return {
     groups,
@@ -277,12 +258,7 @@ export function normalizeConfig(raw: unknown): AppConfig {
     activeAccount,
     suspendAfterMinutes,
     closeToTray: typeof src.closeToTray === 'boolean' ? src.closeToTray : DEFAULT_CONFIG.closeToTray,
-    shortcuts: {
-      accountPrefix: shortcut('accountPrefix', DEFAULT_CONFIG.shortcuts.accountPrefix),
-      groupPrefix: shortcut('groupPrefix', DEFAULT_CONFIG.shortcuts.groupPrefix),
-      nextAccount: shortcut('nextAccount', DEFAULT_CONFIG.shortcuts.nextAccount),
-      prevAccount: shortcut('prevAccount', DEFAULT_CONFIG.shortcuts.prevAccount)
-    }
+    shortcuts: sanitizeShortcuts(rawShortcuts)
   };
 }
 

@@ -131,11 +131,39 @@
         </label>
       </div>
       <div class="shortcuts-guide">
-        <h4>Atajos de teclado (configurables en config.json)</h4>
-        <div class="shortcut-item"><span>Cambiar cuenta activa:</span><code id="settings-account-shortcut">Alt + 1..9</code></div>
-        <div class="shortcut-item"><span>Cambiar grupo activo:</span><code id="settings-group-shortcut">Alt + Shift + 1..9</code></div>
-        <div class="shortcut-item"><span>Recorrer cuentas:</span><code id="settings-next-shortcut">Ctrl + Tab</code></div>
-        <div class="shortcut-item"><span>Recorrer cuentas (atrás):</span><code id="settings-prev-shortcut">Ctrl + Shift + Tab</code></div>
+        <h4>Atajos de teclado</h4>
+        <div class="shortcut-edit">
+          <label for="settings-account-prefix">Cambiar de cuenta</label>
+          <div class="shortcut-input-row">
+            <input type="text" id="settings-account-prefix" class="shortcut-input" spellcheck="false" autocomplete="off" maxlength="32" placeholder="Alt">
+            <span class="shortcut-suffix">+ 1..9</span>
+          </div>
+        </div>
+        <div class="shortcut-edit">
+          <label for="settings-group-prefix">Cambiar de grupo</label>
+          <div class="shortcut-input-row">
+            <input type="text" id="settings-group-prefix" class="shortcut-input" spellcheck="false" autocomplete="off" maxlength="32" placeholder="Alt+Shift">
+            <span class="shortcut-suffix">+ 1..9</span>
+          </div>
+        </div>
+        <div class="shortcut-edit">
+          <label for="settings-next-account">Siguiente cuenta</label>
+          <input type="text" id="settings-next-account" class="shortcut-input" spellcheck="false" autocomplete="off" maxlength="40" placeholder="Ctrl+Tab">
+        </div>
+        <div class="shortcut-edit">
+          <label for="settings-prev-account">Cuenta anterior</label>
+          <input type="text" id="settings-prev-account" class="shortcut-input" spellcheck="false" autocomplete="off" maxlength="40" placeholder="Ctrl+Shift+Tab">
+        </div>
+        <p class="form-hint">
+          Formato: modificadores unidos con <code>+</code> (<code>Ctrl</code>, <code>Alt</code>,
+          <code>Shift</code>, <code>Super</code>) y, para siguiente/anterior, una tecla
+          (<code>Tab</code>, <code>PageDown</code>, <code>A</code>, <code>1</code>…). Se aplican al pulsar
+          Listo.
+        </p>
+        <div class="shortcut-preview" id="settings-shortcut-preview"></div>
+        <div class="shortcut-actions">
+          <button type="button" class="btn btn-secondary" id="btn-reset-shortcuts">Restablecer atajos</button>
+        </div>
       </div>
       <div class="settings-info">
         <div><span class="settings-label">Archivo de configuración:</span> <code id="settings-config-path">config.json</code></div>

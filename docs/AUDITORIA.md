@@ -23,7 +23,7 @@ listados abajo y se verificó cada criterio con la app en ejecución (CDP + capt
 | 7 | Añadir cuenta con servicio/nombre/grupo y partición nueva | ✅ | `createAccount` creó `Partitions/acc_*`, activó la cuenta y cargó la web |
 | 8 | Eliminar cuenta borra su partición (confirmación) | ✅ | `deleteAccount` + verificación `ls`: la carpeta de partición desaparece; confirmación en UI |
 | 9 | Alt+1..9 cuentas · Alt+Shift+1..9 grupos · Ctrl+Tab / Ctrl+Shift+Tab | ✅ | Probados con eventos de teclado reales vía CDP; corregido el fallo de `Alt+Shift+1` que dependía de `input.key` (`!`) |
-| 10 | Atajos configurables en config.json | ✅ | Probado con `Ctrl+Alt`, `Ctrl+Alt+Shift`, `Ctrl+PageDown/Up`; la UI muestra los valores |
+| 10 | Atajos configurables desde la UI y en config.json | ✅ | Editor en Ajustes con validación y aplicación inmediata; probado con `Ctrl+Alt`, `Ctrl+Alt+Shift`, `Ctrl+PageDown/Up`; rechaza prefijos iguales y restauración a defaults |
 | 11 | Suspensión tras X minutos, conservando sesión y recarga | ✅ | `[suspend]` logs; tras 12 s (0.2 min) `loaded=[activa]`, `suspended=5`; al reactivar se recrea la vista con la misma partición |
 | 12 | Indicador visual de cuenta suspendida | ✅ | etiqueta `💤 Suspendida` verificada en las pruebas con estado `suspendedAccounts` |
 | 13 | No leídos por título `(n)`, total por grupo | ✅ | Título forzado `(3) WhatsApp` → `unreadCounts={wa:3}`, badge de cuenta y de grupo = 3 |
@@ -68,7 +68,8 @@ listados abajo y se verificó cada criterio con la app en ejecución (CDP + capt
 7. **Listeners de descarga duplicados**: se añadía `will-download` a la misma sesión cada vez
    que se recreaba una cuenta suspendida. Ahora se inicializa la sesión una sola vez.
 8. **Atajos no configurables y `Alt+Shift+1` roto** en layouts donde Shift+1 = `!`.
-   Implementado parser de `config.shortcuts` y lectura del dígito desde `input.code`.
+   Implementado parser de `config.shortcuts`, lectura del dígito desde `input.code` y **editor
+   de atajos en Ajustes** con validación, aplicación inmediata y botón de restablecer.
 9. **Borrado de cuenta incompleto**: `clearStorageData()` no elimina la carpeta de partición.
    Ahora también se borra `Partitions/<id>` y se valida el id contra path traversal.
 10. **Borrar grupo destruía cuentas y sesiones** sin que el encargo lo pidiera. Ahora mueve
@@ -98,6 +99,7 @@ listados abajo y se verificó cada criterio con la app en ejecución (CDP + capt
 - App en vivo con 6 cuentas: arranque 225 ms, solo la activa cargada, 5 suspendidas.
 - Perfil real del usuario (2 cuentas, tema Purple Mad): arranque 197 ms; solo la cuenta activa cargada; config y particiones intactas.
 - Cambios de cuenta con teclado real (CDP) y atajos personalizados.
+- Editor de atajos probado por UI: guardar, aplicar al instante, rechazar prefijos duplicados, suspender atajos mientras el modal está abierto y restablecer defaults.
 - No leídos: título `(3) WhatsApp` → badge por cuenta y por grupo.
 - Notificación: DBus `Notify` con `"WhatsApp Trabajo: Mensaje de prueba"`.
 - Enlaces externos: navegación bloqueada + log; `window.open` bloqueado.

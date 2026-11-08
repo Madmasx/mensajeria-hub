@@ -112,9 +112,9 @@ npm run dist:dir    # binario local en release/linux-unpacked/
    (`<config>/mensajeria-hub/Partitions/<id>`). **Es irreversible.**
 7. Eliminar un grupo **no borra sesiones**: mueve sus cuentas al primer grupo restante. Si es
    el único grupo y tiene cuentas, se rechaza para no perderlas.
-8. Ajustes (engranaje): minutos de suspensión, cerrar a la bandeja, atajos actuales, ruta de
-   `config.json`, tema detectado y versión. Botón para abrir `config.json` con el editor del
-   sistema.
+8. Ajustes (engranaje): minutos de suspensión, cerrar a la bandeja, **atajos editables**,
+   ruta de `config.json`, tema detectado y versión. Los atajos se validan y se aplican al
+   pulsar Listo. También hay botón para abrir `config.json` con el editor del sistema.
 
 ---
 
@@ -135,8 +135,10 @@ Detalles de implementación:
   `Alt+Shift+1` funcione aunque esa combinación produzca `!` en la distribución del teclado.
 - Los atajos funcionan con el foco en la barra lateral **y** dentro de WhatsApp/Telegram; el
   evento se intercepta en `before-input-event` y se hace `preventDefault()` cuando se maneja.
-- Se pueden reconfigurar editando `config.json` (la app los lee al arrancar). Reinicia la app
-  tras cambiarlos.
+- Se pueden cambiar desde **Ajustes → Atajos**; se validan, se guardan en `config.json` y se
+  aplican al instante (sin reiniciar). Los prefijos de cuenta y grupo deben ser distintos.
+- También puedes editar `config.json` a mano; en ese caso la app los lee al arrancar y repara
+  valores inválidos o conflictivos usando los predeterminados.
 
 ---
 

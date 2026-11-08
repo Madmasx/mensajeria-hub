@@ -71,10 +71,12 @@ const btnSettings = $<HTMLButtonElement>('btn-settings');
 const btnCloseSettings = $<HTMLButtonElement>('btn-close-settings');
 const settingSuspendInput = $<HTMLInputElement>('setting-suspend');
 const settingCloseToTrayInput = $<HTMLInputElement>('setting-closetotray');
-const settingsAccountShortcut = $('settings-account-shortcut');
-const settingsGroupShortcut = $('settings-group-shortcut');
-const settingsNextShortcut = $('settings-next-shortcut');
-const settingsPrevShortcut = $('settings-prev-shortcut');
+const settingAccountPrefix = $<HTMLInputElement>('settings-account-prefix');
+const settingGroupPrefix = $<HTMLInputElement>('settings-group-prefix');
+const settingNextAccount = $<HTMLInputElement>('settings-next-account');
+const settingPrevAccount = $<HTMLInputElement>('settings-prev-account');
+const settingShortcutPreview = $('settings-shortcut-preview');
+const btnResetShortcuts = $<HTMLButtonElement>('btn-reset-shortcuts');
 const settingsConfigPath = $('settings-config-path');
 const settingsVersion = $('settings-version');
 const settingsTheme = $('settings-theme');
@@ -425,6 +427,38 @@ function populateGroupSelect(selectedId?: string): void {
   });
 }
 
+const SHORTCUT_DEFAULTS: AppConfig['shortcuts'] = {
+  accountPrefix: 'Alt',
+  groupPrefix: 'Alt+Shift',
+  nextAccount: 'Ctrl+Tab',
+  prevAccount: 'Ctrl+Shift+Tab'
+};
+
+function fillShortcutInputs(): void {
+  settingAccountPrefix.value = config.shortcuts.accountPrefix;
+  settingGroupPrefix.value = config.shortcuts.groupPrefix;
+  settingNextAccount.value = config.shortcuts.nextAccount;
+  settingPrevAccount.value = config.shortcuts.prevAccount;
+  updateShortcutPreview();
+}
+
+function readShortcutInputs(): AppConfig['shortcuts'] {
+  return {
+    accountPrefix: settingAccountPrefix.value.trim(),
+    groupPrefix: settingGroupPrefix.value.trim(),
+    nextAccount: settingNextAccount.value.trim(),
+    prevAccount: settingPrevAccount.value.trim()
+  };
+}
+
+function updateShortcutPreview(): void {
+  const shortcuts = readShortcutInputs();
+  const account = shortcuts.accountPrefix ? `${shortcuts.accountPrefix}+1..9` : '—';
+  const group = shortcuts.groupPrefix ? `${shortcuts.groupPrefix}+1..9` : '—';
+  settingShortcutPreview.textContent =
+    `Activos: ${account} · ${group} · ${shortcuts.nextAccount || '—'} · ${shortcuts.prevAccount || '—'}`;
+}
+
 function setupEvents(): void {
   groupColorInput.addEventListener('input', () => {
     groupColorHex.textContent = groupColorInput.value;
@@ -616,10 +650,7 @@ function setupEvents(): void {
   btnSettings.addEventListener('click', async () => {
     settingSuspendInput.value = String(config.suspendAfterMinutes);
     settingCloseToTrayInput.checked = config.closeToTray;
-    settingsAccountShortcut.textContent = `${config.shortcuts.accountPrefix} + 1..9`;
-    settingsGroupShortcut.textContent = `${config.shortcuts.groupPrefix} + 1..9`;
-    settingsNextShortcut.textContent = config.shortcuts.nextAccount;
-    settingsPrevShortcut.textContent = config.shortcuts.prevAccount;
+    fillShortcutInputs();
     try {
       const info = await api.getInfo();
       settingsConfigPath.textContent = info.configPath;
@@ -635,7 +666,8 @@ function setupEvents(): void {
     const minutes = Number.parseFloat(settingSuspendInput.value);
     const result = await api.updateSettings({
       suspendAfterMinutes: Number.isFinite(minutes) ? minutes : config.suspendAfterMinutes,
-      closeToTray: settingCloseToTrayInput.checked
+      closeToTray: settingCloseToTrayInput.checked,
+      shortcuts: readShortcutInputs()
     });
     if (!result.ok) {
       showToast(result.error || 'No se pudieron guardar los ajustes.', 'error');
@@ -643,7 +675,20 @@ function setupEvents(): void {
     }
     modalSettings.close();
     await refreshConfig();
-    showToast('Ajustes guardados.', 'success');
+    showToast('Ajustes y atajos guardados.', 'success');
+  });
+
+  [settingAccountPrefix, settingGroupPrefix, settingNextAccount, settingPrevAccount].forEach((input) => {
+    input.addEventListener('input', updateShortcutPreview);
+  });
+
+  btnResetShortcuts.addEventListener('click', () => {
+    settingAccountPrefix.value = SHORTCUT_DEFAULTS.accountPrefix;
+    settingGroupPrefix.value = SHORTCUT_DEFAULTS.groupPrefix;
+    settingNextAccount.value = SHORTCUT_DEFAULTS.nextAccount;
+    settingPrevAccount.value = SHORTCUT_DEFAULTS.prevAccount;
+    updateShortcutPreview();
+    showToast('Atajos por defecto cargados; pulsa Listo para guardarlos.', 'info');
   });
 
   btnOpenConfig.addEventListener('click', async () => {

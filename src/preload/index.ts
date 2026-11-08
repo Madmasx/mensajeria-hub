@@ -69,7 +69,11 @@ export interface MensajeriaAPI {
   getTheme: () => Promise<ThemeColors>;
   getInfo: () => Promise<AppInfo>;
   getDiagnostics: () => Promise<Diagnostics>;
-  updateSettings: (settings: { suspendAfterMinutes?: number; closeToTray?: boolean }) => Promise<ActionResult>;
+  updateSettings: (settings: {
+    suspendAfterMinutes?: number;
+    closeToTray?: boolean;
+    shortcuts?: AppConfig['shortcuts'];
+  }) => Promise<ActionResult>;
   selectGroup: (groupId: string) => Promise<boolean>;
   selectAccount: (accountId: string) => Promise<boolean>;
   createGroup: (group: { name: string; color: string }) => Promise<ActionResult>;

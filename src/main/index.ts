@@ -15,6 +15,13 @@ import {
   newGroupId,
   saveConfig
 } from './config';
+import {
+  bindingMatches,
+  digitFromInput,
+  modifiersMatch,
+  parseModifierSpec,
+  validateShortcuts
+} from './shortcuts';
 import { ThemeColors, loadOmarchyTheme, loadOmarchyThemeInfo } from './theme';
 import { ViewManager, ViewStatus } from './view-manager';
 import { assetPath, iconPath, resolveDownloadsDir } from './paths';
@@ -34,6 +41,7 @@ let tray: Tray | null = null;
 let trayAvailable = false;
 let isQuitting = false;
 let config: AppConfig = loadConfig();
+let shortcutsSuspended = false;
 
 function log(...args: unknown[]): void {
   if (DEBUG) console.log('[mh]', ...args);
@@ -117,79 +125,6 @@ function pushState(): void {
 // Keyboard shortcuts
 // -----------------------------------------------------------------------------
 
-interface Modifiers {
-  control: boolean;
-  alt: boolean;
-  shift: boolean;
-  meta: boolean;
-}
-
-function parseModifiers(spec: string): Modifiers | null {
-  if (typeof spec !== 'string' || !spec.trim()) return null;
-  const tokens = spec.split('+').map((token) => token.trim().toLowerCase());
-  const modifiers: Modifiers = { control: false, alt: false, shift: false, meta: false };
-  let found = false;
-  for (const token of tokens) {
-    if (token === 'ctrl' || token === 'control') {
-      modifiers.control = true;
-      found = true;
-    } else if (token === 'alt' || token === 'option') {
-      modifiers.alt = true;
-      found = true;
-    } else if (token === 'shift') {
-      modifiers.shift = true;
-      found = true;
-    } else if (token === 'super' || token === 'meta' || token === 'cmd' || token === 'command') {
-      modifiers.meta = true;
-      found = true;
-    }
-  }
-  return found ? modifiers : null;
-}
-
-function modifiersMatch(input: Electron.Input, modifiers: Modifiers): boolean {
-  return (
-    input.control === modifiers.control &&
-    input.alt === modifiers.alt &&
-    input.shift === modifiers.shift &&
-    input.meta === modifiers.meta
-  );
-}
-
-function parseBinding(spec: string): { modifiers: Modifiers; key: string } | null {
-  if (typeof spec !== 'string' || !spec.trim()) return null;
-  const tokens = spec.split('+').map((token) => token.trim().toLowerCase());
-  const modifiers: Modifiers = { control: false, alt: false, shift: false, meta: false };
-  let key = '';
-
-  for (const token of tokens) {
-    if (token === 'ctrl' || token === 'control') modifiers.control = true;
-    else if (token === 'alt' || token === 'option') modifiers.alt = true;
-    else if (token === 'shift') modifiers.shift = true;
-    else if (token === 'super' || token === 'meta' || token === 'cmd' || token === 'command') modifiers.meta = true;
-    else if (token) key = token === 'space' ? ' ' : token;
-  }
-
-  return key ? { modifiers, key } : null;
-}
-
-function bindingMatches(input: Electron.Input, spec: string): boolean {
-  const binding = parseBinding(spec);
-  if (!binding || !modifiersMatch(input, binding.modifiers)) return false;
-  return input.key.toLowerCase() === binding.key;
-}
-
-/**
- * Shift + digit produces a symbol on most layouts ("!" for Shift+1), so digits
- * are read from `input.code` (Digit1..Digit9) instead of `input.key`.
- */
-function digitFromInput(input: Electron.Input): number | null {
-  const byCode = /^(?:Digit|Numpad)([1-9])$/.exec(input.code || '');
-  if (byCode) return Number(byCode[1]);
-  if (/^[1-9]$/.test(input.key)) return Number(input.key);
-  return null;
-}
-
 function cycleAccount(delta: number): void {
   const group = config.groups.find((candidate) => candidate.id === config.activeGroup);
   if (!group || group.accounts.length === 0) return;
@@ -203,11 +138,13 @@ function cycleAccount(delta: number): void {
 }
 
 function handleShortcuts(input: Electron.Input): boolean {
+  // While a settings dialog is open, key combinations belong to the form.
+  if (shortcutsSuspended) return false;
   if (input.type !== 'keyDown' || input.isAutoRepeat) return false;
 
   const shortcuts: ShortcutsConfig = config.shortcuts;
-  const accountPrefix = parseModifiers(shortcuts.accountPrefix);
-  const groupPrefix = parseModifiers(shortcuts.groupPrefix);
+  const accountPrefix = parseModifierSpec(shortcuts.accountPrefix);
+  const groupPrefix = parseModifierSpec(shortcuts.groupPrefix);
   const digit = digitFromInput(input);
 
   if (digit && accountPrefix && modifiersMatch(input, accountPrefix)) {
@@ -449,6 +386,9 @@ function setupIpc(): void {
   });
 
   ipcMain.handle('app:set-account-view-visible', (_event, visible: boolean) => {
+    // Dialogs disable global shortcuts so typing/selecting inside them does
+    // not switch accounts behind the dialog.
+    shortcutsSuspended = !visible;
     viewManager?.setUiHidden(!visible);
   });
 
@@ -673,21 +613,34 @@ function setupIpc(): void {
     }
   });
 
-  ipcMain.handle('app:update-settings', (_event, data: { suspendAfterMinutes?: number; closeToTray?: boolean }) => {
-    try {
-      const minutes = Number(data?.suspendAfterMinutes);
-      if (Number.isFinite(minutes)) {
-        config.suspendAfterMinutes = Math.min(120, Math.max(1, Math.round(minutes)));
+  ipcMain.handle(
+    'app:update-settings',
+    (
+      _event,
+      data: { suspendAfterMinutes?: number; closeToTray?: boolean; shortcuts?: ShortcutsConfig }
+    ) => {
+      try {
+        const minutes = Number(data?.suspendAfterMinutes);
+        if (Number.isFinite(minutes)) {
+          config.suspendAfterMinutes = Math.min(120, Math.max(1, Math.round(minutes)));
+        }
+        if (typeof data?.closeToTray === 'boolean') config.closeToTray = data.closeToTray;
+
+        if (data?.shortcuts) {
+          const validation = validateShortcuts(data.shortcuts);
+          if (!validation.ok) return fail(new Error(validation.error));
+          config.shortcuts = validation.value;
+        }
+
+        saveConfig(config);
+        viewManager?.updateConfig(config);
+        updateTray();
+        return { ok: true as const, config };
+      } catch (err) {
+        return fail(err);
       }
-      if (typeof data?.closeToTray === 'boolean') config.closeToTray = data.closeToTray;
-      saveConfig(config);
-      viewManager?.updateConfig(config);
-      updateTray();
-      return { ok: true as const, config };
-    } catch (err) {
-      return fail(err);
     }
-  });
+  );
 
   ipcMain.handle('app:open-config', async () => {
     try {
