@@ -281,6 +281,12 @@ function createWindow(): void {
     }
   });
 
+  // A default Electron menu (File/Edit/View/Window) would be hidden until the
+  // user taps Alt, which is commonly bound to keyboard-layout switching.
+  // Remove it entirely so Alt never opens a menu bar.
+  mainWindow.setMenu(null);
+  mainWindow.setMenuBarVisibility(false);
+
   viewManager = new ViewManager(
     mainWindow,
     config,
@@ -718,6 +724,7 @@ if (!gotTheLock) {
 
 app.whenReady().then(() => {
   logTiming('app-ready');
+  Menu.setApplicationMenu(null);
   setupIpc();
   createWindow();
   setupTray();
