@@ -55,7 +55,8 @@
           "Comment": "Multi-account WhatsApp and Telegram hub with isolated sessions",
           "Categories": "Network;InstantMessaging;Chat;",
           "StartupWMClass": "mensajeria-hub",
-          "Keywords": "whatsapp;telegram;chat;messaging;"
+          "Keywords": "whatsapp;telegram;chat;messaging;",
+          "MimeType": "x-scheme-handler/mensajeria-hub;x-scheme-handler/whatsapp;x-scheme-handler/tg;"
         }
       },
       "syncDesktopName": true

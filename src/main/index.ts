@@ -50,6 +50,14 @@ let trayAvailable = false;
 let isQuitting = false;
 let config: AppConfig = loadConfig();
 let shortcutsSuspended = false;
+let pendingDeepLink: string | null = extractProtocolUrl(process.argv);
+
+function extractProtocolUrl(argv: string[]): string | null {
+  for (const arg of argv) {
+    if (/^(whatsapp|tg|mensajeria-hub):/i.test(arg)) return arg;
+  }
+  return null;
+}
 
 function log(...args: unknown[]): void {
   if (DEBUG) console.log('[mh]', ...args);
@@ -155,6 +163,28 @@ function handleDeepLink(rawUrl: string, sourceAccountId: string): boolean {
 
   log(`[deep-link] ${rawUrl} -> ${account.id} (${target.url})`);
   return true;
+}
+
+function routeSystemDeepLink(rawUrl: string): boolean {
+  let url = rawUrl;
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol === 'mensajeria-hub:') {
+      const inner = parsed.searchParams.get('url');
+      if (!inner) return false;
+      url = inner;
+    }
+  } catch {
+    return false;
+  }
+  return handleDeepLink(url, config.activeAccount);
+}
+
+function consumePendingDeepLink(): void {
+  if (!pendingDeepLink) return;
+  const url = pendingDeepLink;
+  pendingDeepLink = null;
+  routeSystemDeepLink(url);
 }
 
 function pushState(): void {
@@ -421,6 +451,7 @@ function setupIpc(): void {
     // recreated after being closed to the tray.
     if (config.activeAccount) viewManager?.activateAccount(config.activeAccount);
     else viewManager?.clearActive();
+    consumePendingDeepLink();
     return {
       config,
       unreadCounts: viewManager?.getUnreadCounts() ?? {},
@@ -775,7 +806,14 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', () => {
+  app.on('second-instance', (_event, argv) => {
+    const protocolUrl = extractProtocolUrl(argv);
+    if (protocolUrl) {
+      pendingDeepLink = protocolUrl;
+      showWindow();
+      if (viewManager) consumePendingDeepLink();
+      return;
+    }
     showWindow();
   });
 }

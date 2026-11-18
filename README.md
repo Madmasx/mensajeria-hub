@@ -136,6 +136,25 @@ activa o una del grupo actual). Si no hay cuenta de ese servicio, el enlace se a
 navegador del sistema como antes. Los enlaces externos normales (`https://example.com`) no se
 interceptan.
 
+### Enlaces desde fuera de la app
+
+Para que un enlace `whatsapp://...` abierto desde Brave/Cualquier app abra Mensajería Hub en
+lugar del diálogo `Open With / xdg-open`:
+
+```bash
+./scripts/register-protocols.sh
+```
+
+- Registra `mensajeria-hub://` y `whatsapp://` para que abran la app.
+- Conserva el handler que ya tuvieras para `tg://` (normalmente Telegram Desktop).
+- Si quieres que **también** los enlaces `tg://` abran el hub: `./scripts/register-protocols.sh --telegram`.
+- Para revertir `whatsapp://` al navegador:
+  `xdg-mime default brave-browser.desktop x-scheme-handler/whatsapp`.
+
+La app acepta la URL tanto al arrancar desde cero como por segunda instancia si ya estaba
+abierta, y la enruta a la cuenta correspondiente. En Windows esto no está registrado todavía;
+la versión portable funciona, pero no reclama el esquema `whatsapp://` del sistema.
+
 ---
 
 ## Atajos de teclado
@@ -403,6 +422,7 @@ src/preload/index.ts       # API segura de la UI
 src/preload/account.ts     # puente mínimo de notificaciones
 src/renderer/              # UI (HTML/CSS/TS)
 scripts/install-desktop.sh # lanzador .desktop, wrapper e iconos
+scripts/register-protocols.sh # handler de whatsapp:// y mensajeria-hub://
 scripts/smoke-test.cjs     # prueba automatizada
 ```
 

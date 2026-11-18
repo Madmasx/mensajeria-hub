@@ -44,6 +44,7 @@ Icon=mensajeria-hub
 Terminal=false
 Type=Application
 Categories=Network;InstantMessaging;Chat;
+MimeType=x-scheme-handler/mensajeria-hub;x-scheme-handler/whatsapp;x-scheme-handler/tg;
 StartupWMClass=mensajeria-hub
 Keywords=whatsapp;telegram;chat;messaging;
 DESKTOP
