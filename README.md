@@ -2,6 +2,8 @@
   <img src="docs/banner.png" alt="Mensajería Hub: varias cuentas de WhatsApp y Telegram en una sola ventana" width="100%">
   <br><br>
   <img src="docs/badges.png" alt="Electron 45 · TypeScript · Wayland y X11 · Linux x86_64 · MIT" width="720">
+  <br><br>
+  <a href="https://github.com/Madmasx/mensajeria-hub/releases/latest"><strong>⬇️ Descargar Linux AppImage / Windows .exe</strong></a>
 </div>
 
 **Varias cuentas de WhatsApp y Telegram. Una sola ventana. Sesiones totalmente aisladas.**
