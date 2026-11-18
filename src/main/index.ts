@@ -29,11 +29,18 @@ import { assetPath, iconPath, resolveDownloadsDir } from './paths';
 const DEBUG = process.env.MENSAJERIA_HUB_DEBUG === '1';
 const startedAt = performance.now();
 
-// Linux / Hyprland: let Chromium pick Wayland when available, X11 otherwise.
-app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
-// Keep a stable WM_CLASS / app_id so the Hyprland window rule can match it.
-app.commandLine.appendSwitch('class', 'mensajeria-hub');
+if (process.platform === 'linux') {
+  // Linux / Hyprland: let Chromium pick Wayland when available, X11 otherwise.
+  app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+  // Keep a stable WM_CLASS / app_id so the Hyprland window rule can match it.
+  app.commandLine.appendSwitch('class', 'mensajeria-hub');
+}
+
 app.setName('mensajeria-hub');
+if (process.platform === 'win32') {
+  // Required for Windows notifications to be attributed to the app.
+  app.setAppUserModelId('com.madmasx.mensajeria-hub');
+}
 
 let mainWindow: BrowserWindow | null = null;
 let viewManager: ViewManager | null = null;
@@ -662,6 +669,18 @@ function setupIpc(): void {
   ipcMain.handle('app:reload-account', (_event, accountId: string) => {
     viewManager?.reloadAccount(accountId);
     return true;
+  });
+
+  // Used by the "Creado por" credit in Ajustes. Only http(s) is allowed.
+  ipcMain.handle('app:open-external', async (_event, rawUrl: string) => {
+    try {
+      const url = new URL(rawUrl);
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+      await shell.openExternal(url.href);
+      return true;
+    } catch {
+      return false;
+    }
   });
 
   // Notifications and title updates are forwarded by the account preload.

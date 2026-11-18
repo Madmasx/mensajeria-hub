@@ -123,6 +123,16 @@ export function isValidServiceUrl(raw: string, service: Service): boolean {
 export function configDir(): string {
   const override = process.env.MENSAJERIA_HUB_CONFIG_DIR?.trim();
   if (override) return path.resolve(override);
+
+  if (process.platform === 'win32') {
+    // Matches Electron's userData folder on Windows, so config and session
+    // partitions live together under %APPDATA%\mensajeria-hub.
+    const appData = process.env.APPDATA?.trim();
+    return appData
+      ? path.join(appData, 'mensajeria-hub')
+      : path.join(os.homedir(), 'AppData', 'Roaming', 'mensajeria-hub');
+  }
+
   const xdg = process.env.XDG_CONFIG_HOME?.trim();
   if (xdg && path.isAbsolute(xdg)) return path.join(xdg, 'mensajeria-hub');
   return path.join(os.homedir(), '.config', 'mensajeria-hub');

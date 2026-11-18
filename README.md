@@ -319,6 +319,26 @@ vez (requiere red); el icono empaquetado está en `resources/icon.png` (512×512
 
 ---
 
+
+### Windows (experimental)
+
+```bash
+npm run dist:win
+```
+
+Genera en `release/`:
+
+- `mensajeria-hub-<versión>-x64.exe` — **portable**, un solo ejecutable (no requiere instalación).
+- `mensajeria-hub-<versión>-x64.zip` — carpeta portátil completa.
+
+Notas:
+
+- Se compila desde Linux con electron-builder; el `.exe` es Windows x64 (probado a nivel de build y estructura PE, **no ejecutado en una máquina Windows real**).
+- No está firmado: Windows SmartScreen mostrará el aviso habitual de "editor desconocido".
+- En Windows no existe la integración con Omarchy/Hyprland: usa el tema oscuro propio y la bandeja estándar.
+- La configuración y las particiones de sesión se guardan en `%APPDATA%\mensajeria-hub`.
+
+
 ## Verificación reproducible
 
 ```bash
@@ -365,3 +385,13 @@ src/renderer/              # UI (HTML/CSS/TS)
 scripts/install-desktop.sh # lanzador .desktop, wrapper e iconos
 scripts/smoke-test.cjs     # prueba automatizada
 ```
+
+---
+
+<p align="center">
+  <a href="https://github.com/Madmasx">
+    <img src="docs/created-by-madmasx.png" alt="Creado por Madmasx" width="480">
+  </a>
+  <br>
+  <sub>Creado por <a href="https://github.com/Madmasx">Madmasx</a> · <a href="https://x.com/Madmasx">@Madmasx</a></sub>
+</p>

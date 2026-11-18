@@ -696,6 +696,14 @@ function setupEvents(): void {
     if (!result.ok) showToast(result.error || 'No se pudo abrir config.json.', 'error');
   });
 
+  document.querySelectorAll<HTMLAnchorElement>('.creator-link').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const url = link.dataset.external;
+      if (url) void api.openExternal(url);
+    });
+  });
+
   // Confirm modal
   btnConfirmCancel.addEventListener('click', () => {
     modalConfirm.close();

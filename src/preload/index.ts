@@ -95,6 +95,7 @@ export interface MensajeriaAPI {
   setSidebarBounds: (width: number) => Promise<void>;
   setAccountViewVisible: (visible: boolean) => Promise<void>;
   openConfig: () => Promise<ActionResult>;
+  openExternal: (url: string) => Promise<boolean>;
   reloadAccount: (accountId: string) => Promise<boolean>;
   onUnreadCounts: (callback: (counts: Record<string, number>) => void) => () => void;
   onActiveChanged: (callback: (data: { groupId: string; accountId: string }) => void) => () => void;
@@ -130,6 +131,7 @@ const api: MensajeriaAPI = {
   setSidebarBounds: (width) => ipcRenderer.invoke('app:set-sidebar-bounds', width),
   setAccountViewVisible: (visible) => ipcRenderer.invoke('app:set-account-view-visible', visible),
   openConfig: () => ipcRenderer.invoke('app:open-config'),
+  openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   reloadAccount: (accountId) => ipcRenderer.invoke('app:reload-account', accountId),
 
   onUnreadCounts: (callback) => subscribe('app:unread-counts', callback),
