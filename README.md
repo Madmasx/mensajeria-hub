@@ -120,6 +120,24 @@ npm run dist:dir    # binario local en release/linux-unpacked/
 
 ---
 
+## Enlaces de WhatsApp y Telegram
+
+Los enlaces que WhatsApp/Telegram Web intentan abrir fuera de la app se reconocen y se cargan
+dentro de la cuenta correcta, sin pasar por el diálogo `Open xdg-open?` del sistema:
+
+- `wa.me/<número>`, `api.whatsapp.com/send?phone=...`, `whatsapp://send?...` → chat en la cuenta
+  de WhatsApp (se convierten a `web.whatsapp.com/send`).
+- `chat.whatsapp.com/<código>` → invitación en `web.whatsapp.com/accept`.
+- `t.me/<usuario>`, `tg://resolve?domain=...` → chat/perfil en `web.telegram.org`.
+- `t.me/+<invite>`, `tg://join?...` → invitación de Telegram.
+
+Si el enlace es de otro servicio, se cambia a una cuenta de ese servicio (preferentemente la
+activa o una del grupo actual). Si no hay cuenta de ese servicio, el enlace se abre en el
+navegador del sistema como antes. Los enlaces externos normales (`https://example.com`) no se
+interceptan.
+
+---
+
 ## Atajos de teclado
 
 Los valores salen de `config.json → shortcuts`; la UI los muestra formateados.

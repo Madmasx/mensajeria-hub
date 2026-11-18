@@ -24,6 +24,7 @@ import {
 } from './shortcuts';
 import { ThemeColors, loadOmarchyTheme, loadOmarchyThemeInfo } from './theme';
 import { ViewManager, ViewStatus } from './view-manager';
+import { parseDeepLink } from './deep-links';
 import { assetPath, iconPath, resolveDownloadsDir } from './paths';
 
 const DEBUG = process.env.MENSAJERIA_HUB_DEBUG === '1';
@@ -116,6 +117,43 @@ function selectAccount(accountId: string): boolean {
 
   log(`[select] account ${account.id} group ${config.activeGroup}`);
   commitActiveSelection();
+  return true;
+}
+
+/**
+ * Routes WhatsApp/Telegram links that would otherwise open the system browser
+ * (and trigger the "Open xdg-open?" dialog) into the matching account view.
+ */
+function handleDeepLink(rawUrl: string, sourceAccountId: string): boolean {
+  const source = config.accounts.find((account) => account.id === sourceAccountId);
+  const target = parseDeepLink(rawUrl, source?.service);
+  if (!target) return false;
+
+  const candidates = config.accounts.filter((account) => account.service === target.service);
+  if (candidates.length === 0) return false;
+
+  let account: AccountConfig | undefined;
+  if (source?.service === target.service) {
+    account = source;
+  } else {
+    const activeGroup = config.groups.find((group) => group.id === config.activeGroup);
+    account =
+      candidates.find((candidate) => candidate.id === config.activeAccount) ??
+      candidates.find((candidate) => activeGroup?.accounts.includes(candidate.id)) ??
+      candidates[0];
+  }
+  if (!account) return false;
+
+  if (account.id !== config.activeAccount) {
+    selectAccount(account.id);
+  } else if (viewManager) {
+    viewManager.activateAccount(account.id);
+  }
+
+  const opened = viewManager?.openInAccount(account.id, target.url) ?? false;
+  if (!opened) return false;
+
+  log(`[deep-link] ${rawUrl} -> ${account.id} (${target.url})`);
   return true;
 }
 
@@ -312,7 +350,8 @@ function createWindow(): void {
       },
       onStatus: (status: ViewStatus) => {
         sendToUi('app:account-status', status);
-      }
+      },
+      onDeepLink: (url, sourceAccountId) => handleDeepLink(url, sourceAccountId)
     },
     { iconPath: fs.existsSync(iconPath()) ? iconPath() : undefined }
   );

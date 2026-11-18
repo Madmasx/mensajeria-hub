@@ -51,6 +51,8 @@ export interface ViewManagerCallbacks {
   onNotificationClick?: (accountId: string) => void;
   onStatus?: (status: ViewStatus) => void;
   onExternalOpen?: (url: string) => void;
+  /** Return true when a WhatsApp/Telegram deep link was routed inside the app. */
+  onDeepLink?: (url: string, sourceAccountId: string) => boolean;
 }
 
 export interface ViewManagerOptions {
@@ -278,6 +280,7 @@ export class ViewManager {
       if (!rawUrl) return;
       if (isServiceUrl(rawUrl, account.service)) return;
       event.preventDefault();
+      if (this.callbacks.onDeepLink?.(rawUrl, account.id)) return;
       this.openExternal(rawUrl);
     };
 
@@ -289,6 +292,9 @@ export class ViewManager {
     });
 
     contents.setWindowOpenHandler(({ url }) => {
+      if (this.callbacks.onDeepLink?.(url, account.id)) {
+        return { action: 'deny' };
+      }
       this.openExternal(url);
       return { action: 'deny' };
     });
@@ -322,6 +328,8 @@ export class ViewManager {
 
     contents.loadURL(account.url).catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
+      // Deep-link routing can supersede this initial load; that is not an error.
+      if (/ERR_ABORTED|\(-3\)/.test(message)) return;
       this.emitStatus(account.id, 'error', message);
       log(`[load] ${account.id} failed:`, message);
     });
@@ -547,6 +555,30 @@ export class ViewManager {
     managed.view.webContents.loadURL(account.url).catch((err: unknown) => {
       log(`[reload] ${accountId} failed:`, err);
     });
+  }
+
+  /**
+   * Opens a deep link inside the view of the right account. If that account is
+   * suspended, it is activated/recreated first; the session is reused.
+   */
+  public openInAccount(accountId: string, url: string): boolean {
+    const account = this.config.accounts.find((candidate) => candidate.id === accountId);
+    if (!account) return false;
+
+    if (this.activeAccountId !== accountId) {
+      if (!this.activateAccount(accountId)) return false;
+    }
+
+    const managed = this.views.get(accountId);
+    if (!managed) return false;
+
+    managed.view.webContents.loadURL(url).catch((err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
+      if (/ERR_ABORTED|\(-3\)/.test(message)) return;
+      log(`[deep-link] ${accountId} failed to load ${url}:`, message);
+    });
+    log(`[deep-link] ${accountId} <- ${url}`);
+    return true;
   }
 
   public updateConfig(newConfig: AppConfig): void {
