@@ -355,16 +355,20 @@ export class ViewManager {
     // Only notifications (and fullscreen) are granted. Camera, microphone,
     // geolocation, etc. stay denied: the hub is a chat front-end, not a
     // browser with blanket permissions.
+    // WhatsApp/Telegram calls need microphone/camera. Electron has no browser
+    // permission UI, so grants are automatic for the official service origin
+    // only; everything else (geolocation, MIDI, USB...) stays denied.
     accountSession.setPermissionRequestHandler((webContents, permission, callback) => {
-      const allowed =
-        (permission === 'notifications' || permission === 'fullscreen') &&
-        isServiceUrl(webContents.getURL(), account.service);
-      callback(allowed);
+      const allowedPermission =
+        permission === 'notifications' || permission === 'fullscreen' || permission === 'media';
+      callback(allowedPermission && isServiceUrl(webContents.getURL(), account.service));
     });
 
-    accountSession.setPermissionCheckHandler((_webContents, permission, requestingOrigin) => {
-      const allowed = permission === 'notifications' || permission === 'fullscreen';
-      return allowed && isServiceUrl(requestingOrigin || '', account.service);
+    accountSession.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
+      const allowedPermission =
+        permission === 'notifications' || permission === 'fullscreen' || permission === 'media';
+      const origin = requestingOrigin || webContents?.getURL() || '';
+      return allowedPermission && isServiceUrl(origin, account.service);
     });
 
     accountSession.on('will-download', (_event, item) => {

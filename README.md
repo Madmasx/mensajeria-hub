@@ -46,6 +46,8 @@ de contexto (Trabajo, Personal…) con sesiones completamente aisladas.
 - **Bandeja del sistema**: cerrar la ventana puede ocultarla a la bandeja; el icono cambia
   cuando hay mensajes sin leer. Si el sistema no tiene bandeja, la app cierra normalmente en
   vez de quedar inaccesible.
+- **Llamadas**: micrófono y cámara se conceden automáticamente al origen oficial de
+  WhatsApp/Telegram (sin diálogo del navegador); el resto de permisos se deniega.
 - **Tema de Omarchy**: lee los colores del tema aplicado (Omarchy 4 los guarda en
   `$XDG_STATE_HOME/omarchy/current/theme/colors.toml`).
 - **Restauración**: al abrir vuelve al grupo y cuenta activos guardados en `config.json`.
@@ -268,8 +270,9 @@ volver a iniciar sesión.
 - Navegación: solo se permite el origen oficial de cada servicio. Cualquier otro destino
   (`will-navigate`, `will-redirect`, `window.open`) se bloquea y se abre en el navegador del
   sistema si es `http(s)`; protocolos como `javascript:`, `file:` o `data:` se rechazan.
-- Permisos de sesión: solo `notifications` y `fullscreen` (y únicamente para el origen del
-  servicio). Cámara, micrófono, geolocalización, etc. se deniegan.
+- Permisos de sesión: `notifications`, `fullscreen` y `media` (micrófono/cámara para
+  llamadas), siempre limitados al origen oficial del servicio. Geolocalización, USB, MIDI,
+  etc. se deniegan.
 - Descargas: se sanean nombres y se evita sobrescribir archivos existentes.
 - `config.json` no contiene credenciales: las sesiones las gestiona Electron en la partición.
 - La UI local no puede navegar ni abrir ventanas (`will-navigate` bloqueado, `setWindowOpenHandler`
@@ -399,8 +402,9 @@ está en [`docs/AUDITORIA.md`](docs/AUDITORIA.md).
 
 - WhatsApp/Telegram Web pueden cambiar su título o su política de sesión; el contador depende
   del formato `(n)` en el título.
-- Las llamadas de audio/vídeo no están soportadas (los permisos de cámara/micrófono están
-  denegados a propósito).
+- Las llamadas dependen del soporte WebRTC/audio de Electron y de que el sistema tenga
+  micrófono/cámara. El permiso se concede para el origen oficial sin mostrar un diálogo del
+  navegador.
 - Las notificaciones dependen del *shim* de `Notification` y del servicio de notificaciones
   del escritorio; si el servicio no está activo no se verán.
 - El service worker de una cuenta cerrada puede tardar hasta ~1 minuto en terminar (Chromium).
