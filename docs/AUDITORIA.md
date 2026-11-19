@@ -76,7 +76,8 @@ listados abajo y se verificó cada criterio con la app en ejecución (CDP + capt
     las cuentas a otro grupo (y rechaza borrar el único grupo con cuentas).
 11. **Enlaces externos sin validación de protocolo**; se abre en el navegador solo `http(s)`.
 12. **Sin manejadores de permisos**: se conceden `notifications`/`fullscreen`/`media`
-    (micrófono y cámara para llamadas) solo para el origen del servicio; el resto se deniega.
+    (micrófono y cámara para llamadas, activables en Ajustes) solo para el origen del
+    servicio; el resto se deniega.
 13. **Bandeja sin manejo de fallo**: si el sistema no soporta tray, la app se cerraba al
     ocultarse y quedaba inaccesible. Ahora detecta el fallo, no oculta y permite reabrir.
 14. **Ventana irrecuperable** si se cerraba a nivel de renderer: `showWindow()` recrea la

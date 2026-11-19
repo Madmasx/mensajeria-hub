@@ -117,8 +117,9 @@ npm run dist:dir    # binario local en release/linux-unpacked/
 7. Eliminar un grupo **no borra sesiones**: mueve sus cuentas al primer grupo restante. Si es
    el único grupo y tiene cuentas, se rechaza para no perderlas.
 8. Ajustes (engranaje): minutos de suspensión, cerrar a la bandeja, **atajos editables**,
-   ruta de `config.json`, tema detectado y versión. Los atajos se validan y se aplican al
-   pulsar Listo. También hay botón para abrir `config.json` con el editor del sistema.
+   **permisos de micrófono/cámara** para llamadas, ruta de `config.json`, tema detectado y
+   versión. Los atajos se validan y se aplican al pulsar Listo. También hay botón para abrir
+   `config.json` con el editor del sistema.
 
 ---
 
@@ -204,6 +205,8 @@ las particiones viven en `~/.config/mensajeria-hub/Partitions/<id>`.
   "activeAccount": "wa-trabajo",
   "suspendAfterMinutes": 10,
   "closeToTray": true,
+  "allowMicrophone": true,
+  "allowCamera": true,
   "shortcuts": {
     "accountPrefix": "Alt",
     "groupPrefix": "Alt+Shift",
@@ -271,8 +274,8 @@ volver a iniciar sesión.
   (`will-navigate`, `will-redirect`, `window.open`) se bloquea y se abre en el navegador del
   sistema si es `http(s)`; protocolos como `javascript:`, `file:` o `data:` se rechazan.
 - Permisos de sesión: `notifications`, `fullscreen` y `media` (micrófono/cámara para
-  llamadas), siempre limitados al origen oficial del servicio. Geolocalización, USB, MIDI,
-  etc. se deniegan.
+  llamadas, configurables en Ajustes), siempre limitados al origen oficial del servicio.
+  Geolocalización, USB, MIDI, etc. se deniegan.
 - Descargas: se sanean nombres y se evita sobrescribir archivos existentes.
 - `config.json` no contiene credenciales: las sesiones las gestiona Electron en la partición.
 - La UI local no puede navegar ni abrir ventanas (`will-navigate` bloqueado, `setWindowOpenHandler`
@@ -403,8 +406,8 @@ está en [`docs/AUDITORIA.md`](docs/AUDITORIA.md).
 - WhatsApp/Telegram Web pueden cambiar su título o su política de sesión; el contador depende
   del formato `(n)` en el título.
 - Las llamadas dependen del soporte WebRTC/audio de Electron y de que el sistema tenga
-  micrófono/cámara. El permiso se concede para el origen oficial sin mostrar un diálogo del
-  navegador.
+  micrófono/cámara. Los permisos se conceden para el origen oficial sin diálogo del navegador
+  y pueden desactivarse en **Ajustes → Permisos de llamadas**.
 - Las notificaciones dependen del *shim* de `Notification` y del servicio de notificaciones
   del escritorio; si el servicio no está activo no se verán.
 - El service worker de una cuenta cerrada puede tardar hasta ~1 minuto en terminar (Chromium).

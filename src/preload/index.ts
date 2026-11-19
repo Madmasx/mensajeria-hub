@@ -72,6 +72,8 @@ export interface MensajeriaAPI {
   updateSettings: (settings: {
     suspendAfterMinutes?: number;
     closeToTray?: boolean;
+    allowMicrophone?: boolean;
+    allowCamera?: boolean;
     shortcuts?: AppConfig['shortcuts'];
   }) => Promise<ActionResult>;
   selectGroup: (groupId: string) => Promise<boolean>;

@@ -29,6 +29,8 @@ export interface AppConfig {
   activeAccount: string;
   suspendAfterMinutes: number;
   closeToTray: boolean;
+  allowMicrophone: boolean;
+  allowCamera: boolean;
   shortcuts: ShortcutsConfig;
 }
 
@@ -76,6 +78,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   activeAccount: 'wa-trabajo',
   suspendAfterMinutes: 10,
   closeToTray: true,
+  allowMicrophone: true,
+  allowCamera: true,
   shortcuts: { ...DEFAULT_SHORTCUTS }
 };
 
@@ -268,6 +272,9 @@ export function normalizeConfig(raw: unknown): AppConfig {
     activeAccount,
     suspendAfterMinutes,
     closeToTray: typeof src.closeToTray === 'boolean' ? src.closeToTray : DEFAULT_CONFIG.closeToTray,
+    allowMicrophone:
+      typeof src.allowMicrophone === 'boolean' ? src.allowMicrophone : DEFAULT_CONFIG.allowMicrophone,
+    allowCamera: typeof src.allowCamera === 'boolean' ? src.allowCamera : DEFAULT_CONFIG.allowCamera,
     shortcuts: sanitizeShortcuts(rawShortcuts)
   };
 }

@@ -700,7 +700,13 @@ function setupIpc(): void {
     'app:update-settings',
     (
       _event,
-      data: { suspendAfterMinutes?: number; closeToTray?: boolean; shortcuts?: ShortcutsConfig }
+      data: {
+        suspendAfterMinutes?: number;
+        closeToTray?: boolean;
+        allowMicrophone?: boolean;
+        allowCamera?: boolean;
+        shortcuts?: ShortcutsConfig;
+      }
     ) => {
       try {
         const minutes = Number(data?.suspendAfterMinutes);
@@ -708,6 +714,8 @@ function setupIpc(): void {
           config.suspendAfterMinutes = Math.min(120, Math.max(1, Math.round(minutes)));
         }
         if (typeof data?.closeToTray === 'boolean') config.closeToTray = data.closeToTray;
+        if (typeof data?.allowMicrophone === 'boolean') config.allowMicrophone = data.allowMicrophone;
+        if (typeof data?.allowCamera === 'boolean') config.allowCamera = data.allowCamera;
 
         if (data?.shortcuts) {
           const validation = validateShortcuts(data.shortcuts);

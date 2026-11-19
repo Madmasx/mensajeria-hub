@@ -16,6 +16,8 @@ const EMPTY_CONFIG: AppConfig = {
   activeAccount: '',
   suspendAfterMinutes: 10,
   closeToTray: true,
+  allowMicrophone: true,
+  allowCamera: true,
   shortcuts: {
     accountPrefix: 'Alt',
     groupPrefix: 'Alt+Shift',
@@ -71,6 +73,8 @@ const btnSettings = $<HTMLButtonElement>('btn-settings');
 const btnCloseSettings = $<HTMLButtonElement>('btn-close-settings');
 const settingSuspendInput = $<HTMLInputElement>('setting-suspend');
 const settingCloseToTrayInput = $<HTMLInputElement>('setting-closetotray');
+const settingAllowMicrophoneInput = $<HTMLInputElement>('setting-allow-microphone');
+const settingAllowCameraInput = $<HTMLInputElement>('setting-allow-camera');
 const settingAccountPrefix = $<HTMLInputElement>('settings-account-prefix');
 const settingGroupPrefix = $<HTMLInputElement>('settings-group-prefix');
 const settingNextAccount = $<HTMLInputElement>('settings-next-account');
@@ -650,6 +654,8 @@ function setupEvents(): void {
   btnSettings.addEventListener('click', async () => {
     settingSuspendInput.value = String(config.suspendAfterMinutes);
     settingCloseToTrayInput.checked = config.closeToTray;
+    settingAllowMicrophoneInput.checked = config.allowMicrophone;
+    settingAllowCameraInput.checked = config.allowCamera;
     fillShortcutInputs();
     try {
       const info = await api.getInfo();
@@ -667,6 +673,8 @@ function setupEvents(): void {
     const result = await api.updateSettings({
       suspendAfterMinutes: Number.isFinite(minutes) ? minutes : config.suspendAfterMinutes,
       closeToTray: settingCloseToTrayInput.checked,
+      allowMicrophone: settingAllowMicrophoneInput.checked,
+      allowCamera: settingAllowCameraInput.checked,
       shortcuts: readShortcutInputs()
     });
     if (!result.ok) {

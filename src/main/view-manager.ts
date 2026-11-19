@@ -352,23 +352,50 @@ export class ViewManager {
 
     accountSession.setUserAgent(USER_AGENT, 'es-ES,es;q=0.9,en;q=0.8');
 
-    // Only notifications (and fullscreen) are granted. Camera, microphone,
-    // geolocation, etc. stay denied: the hub is a chat front-end, not a
-    // browser with blanket permissions.
     // WhatsApp/Telegram calls need microphone/camera. Electron has no browser
     // permission UI, so grants are automatic for the official service origin
-    // only; everything else (geolocation, MIDI, USB...) stays denied.
-    accountSession.setPermissionRequestHandler((webContents, permission, callback) => {
-      const allowedPermission =
-        permission === 'notifications' || permission === 'fullscreen' || permission === 'media';
-      callback(allowedPermission && isServiceUrl(webContents.getURL(), account.service));
+    // only; everything else (geolocation, MIDI, USB...) stays denied. The
+    // microphone/camera toggles in Ajustes are checked on every request.
+    accountSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
+      if (!isServiceUrl(webContents.getURL(), account.service)) {
+        callback(false);
+        return;
+      }
+      if (permission === 'notifications' || permission === 'fullscreen') {
+        callback(true);
+        return;
+      }
+      if (permission === 'media') {
+        const mediaTypes =
+          (details as unknown as { mediaTypes?: string[] } | undefined)?.mediaTypes ?? [];
+        const wantsAudio = mediaTypes.includes('audio');
+        const wantsVideo = mediaTypes.includes('video');
+        if (mediaTypes.length === 0) {
+          callback(this.config.allowMicrophone && this.config.allowCamera);
+          return;
+        }
+        callback(
+          (!wantsAudio || this.config.allowMicrophone) &&
+            (!wantsVideo || this.config.allowCamera)
+        );
+        return;
+      }
+      callback(false);
     });
 
     accountSession.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
-      const allowedPermission =
-        permission === 'notifications' || permission === 'fullscreen' || permission === 'media';
-      const origin = requestingOrigin || webContents?.getURL() || '';
-      return allowedPermission && isServiceUrl(origin, account.service);
+      if (permission === 'media') {
+        // Electron may call this check with a null webContents; the request
+        // handler above already validated the origin of the calling view.
+        return this.config.allowMicrophone || this.config.allowCamera;
+      }
+      if (permission !== 'notifications' && permission !== 'fullscreen') return false;
+      try {
+        const origin = requestingOrigin || webContents?.getURL() || '';
+        return isServiceUrl(origin, account.service);
+      } catch {
+        return false;
+      }
     });
 
     accountSession.on('will-download', (_event, item) => {
