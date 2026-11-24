@@ -750,6 +750,18 @@ body {
   padding: 5px 10px;
 }
 
+.settings-refresh-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.settings-refresh-actions .btn {
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
 
 /* Creator credit (Ajustes) */
 .creator-credit {

@@ -99,6 +99,8 @@ export interface MensajeriaAPI {
   openConfig: () => Promise<ActionResult>;
   openExternal: (url: string) => Promise<boolean>;
   reloadAccount: (accountId: string) => Promise<boolean>;
+  hardReloadAccount: (accountId: string) => Promise<boolean>;
+  hardReloadAll: () => Promise<number>;
   onUnreadCounts: (callback: (counts: Record<string, number>) => void) => () => void;
   onActiveChanged: (callback: (data: { groupId: string; accountId: string }) => void) => () => void;
   onSuspendedAccounts: (callback: (accounts: string[]) => void) => () => void;
@@ -135,6 +137,8 @@ const api: MensajeriaAPI = {
   openConfig: () => ipcRenderer.invoke('app:open-config'),
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   reloadAccount: (accountId) => ipcRenderer.invoke('app:reload-account', accountId),
+  hardReloadAccount: (accountId) => ipcRenderer.invoke('app:hard-reload-account', accountId),
+  hardReloadAll: () => ipcRenderer.invoke('app:hard-reload-all'),
 
   onUnreadCounts: (callback) => subscribe('app:unread-counts', callback),
   onActiveChanged: (callback) => subscribe('app:active-changed', callback),

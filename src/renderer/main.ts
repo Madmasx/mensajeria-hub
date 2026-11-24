@@ -75,6 +75,8 @@ const settingSuspendInput = $<HTMLInputElement>('setting-suspend');
 const settingCloseToTrayInput = $<HTMLInputElement>('setting-closetotray');
 const settingAllowMicrophoneInput = $<HTMLInputElement>('setting-allow-microphone');
 const settingAllowCameraInput = $<HTMLInputElement>('setting-allow-camera');
+const btnRefreshActive = $<HTMLButtonElement>('btn-refresh-active');
+const btnRefreshAll = $<HTMLButtonElement>('btn-refresh-all');
 const settingAccountPrefix = $<HTMLInputElement>('settings-account-prefix');
 const settingGroupPrefix = $<HTMLInputElement>('settings-group-prefix');
 const settingNextAccount = $<HTMLInputElement>('settings-next-account');
@@ -88,6 +90,7 @@ const btnOpenConfig = $<HTMLButtonElement>('btn-open-config');
 
 const modalMenu = $<HTMLDialogElement>('modal-menu');
 const menuTitle = $('menu-title');
+const menuBtnReload = $<HTMLButtonElement>('menu-btn-reload');
 const menuBtnEdit = $<HTMLButtonElement>('menu-btn-edit');
 const menuBtnMoveUp = $<HTMLButtonElement>('menu-btn-move-up');
 const menuBtnMoveDown = $<HTMLButtonElement>('menu-btn-move-down');
@@ -375,6 +378,7 @@ function openGroupMenu(group: GroupConfig): void {
   targetGroupForMenu = group;
   targetAccountForMenu = null;
   menuTitle.textContent = `Grupo: ${group.name}`;
+  menuBtnReload.style.display = 'none';
   menuBtnMoveUp.textContent = 'Mover hacia la izquierda';
   menuBtnMoveDown.textContent = 'Mover hacia la derecha';
   openDialog(modalMenu);
@@ -384,6 +388,7 @@ function openAccountMenu(account: AccountConfig, group: GroupConfig): void {
   targetAccountForMenu = { account, group };
   targetGroupForMenu = null;
   menuTitle.textContent = `Cuenta: ${account.name}`;
+  menuBtnReload.style.display = '';
   menuBtnMoveUp.textContent = 'Mover hacia arriba';
   menuBtnMoveDown.textContent = 'Mover hacia abajo';
   openDialog(modalMenu);
@@ -548,6 +553,21 @@ function setupEvents(): void {
   // Menu modal
   btnCloseMenu.addEventListener('click', () => modalMenu.close());
 
+  menuBtnReload.addEventListener('click', async () => {
+    const account = targetAccountForMenu?.account;
+    modalMenu.close();
+    if (!account) return;
+    accountStatus[account.id] = 'loading';
+    renderAccounts();
+    const ok = await api.hardReloadAccount(account.id);
+    showToast(
+      ok
+        ? `"${account.name}" actualizada (caché limpiada, sesión intacta).`
+        : 'No se pudo actualizar la cuenta.',
+      ok ? 'success' : 'error'
+    );
+  });
+
   menuBtnEdit.addEventListener('click', () => {
     modalMenu.close();
     if (targetGroupForMenu) {
@@ -702,6 +722,34 @@ function setupEvents(): void {
   btnOpenConfig.addEventListener('click', async () => {
     const result = await api.openConfig();
     if (!result.ok) showToast(result.error || 'No se pudo abrir config.json.', 'error');
+  });
+
+  btnRefreshActive.addEventListener('click', async () => {
+    if (!config.activeAccount) {
+      showToast('No hay ninguna cuenta activa para actualizar.', 'info');
+      return;
+    }
+    modalSettings.close();
+    accountStatus[config.activeAccount] = 'loading';
+    renderAccounts();
+    const ok = await api.hardReloadAccount(config.activeAccount);
+    showToast(
+      ok
+        ? 'Cuenta activa actualizada (caché limpiada, sesión intacta).'
+        : 'No se pudo actualizar la cuenta activa.',
+      ok ? 'success' : 'error'
+    );
+  });
+
+  btnRefreshAll.addEventListener('click', async () => {
+    modalSettings.close();
+    const count = await api.hardReloadAll();
+    showToast(
+      count > 0
+        ? `${count} cuenta${count === 1 ? '' : 's'} actualizada${count === 1 ? '' : 's'} (caché limpiada, sesión intacta).`
+        : 'No hay cuentas cargadas para actualizar.',
+      count > 0 ? 'success' : 'info'
+    );
   });
 
   document.querySelectorAll<HTMLAnchorElement>('.creator-link').forEach((link) => {

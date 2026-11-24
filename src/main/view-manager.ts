@@ -365,13 +365,18 @@ export class ViewManager {
         callback(true);
         return;
       }
+      if ((permission as string) === 'speaker-selection') {
+        callback(this.config.allowMicrophone);
+        return;
+      }
       if (permission === 'media') {
         const mediaTypes =
           (details as unknown as { mediaTypes?: string[] } | undefined)?.mediaTypes ?? [];
         const wantsAudio = mediaTypes.includes('audio');
         const wantsVideo = mediaTypes.includes('video');
         if (mediaTypes.length === 0) {
-          callback(this.config.allowMicrophone && this.config.allowCamera);
+          // Device enumeration (enumerateDevices) or generic media check only needs one enabled.
+          callback(this.config.allowMicrophone || this.config.allowCamera);
           return;
         }
         callback(
@@ -388,6 +393,9 @@ export class ViewManager {
         // Electron may call this check with a null webContents; the request
         // handler above already validated the origin of the calling view.
         return this.config.allowMicrophone || this.config.allowCamera;
+      }
+      if ((permission as string) === 'speaker-selection') {
+        return this.config.allowMicrophone;
       }
       if (permission !== 'notifications' && permission !== 'fullscreen') return false;
       try {
@@ -586,6 +594,48 @@ export class ViewManager {
     managed.view.webContents.loadURL(account.url).catch((err: unknown) => {
       log(`[reload] ${accountId} failed:`, err);
     });
+  }
+
+  /**
+   * Clears HTTP cache (preserving cookies/IndexedDB login session) and reloads
+   * ignoring cache. Fixes stuck WebRTC/call states without logging the user out.
+   */
+  public async hardReloadAccount(accountId: string): Promise<boolean> {
+    const account = this.config.accounts.find((candidate) => candidate.id === accountId);
+    if (!account) return false;
+
+    const accountSession = session.fromPartition(partitionFor(accountId));
+    try {
+      await accountSession.clearCache();
+    } catch (err) {
+      log(`[hard-reload] clearCache failed for ${accountId}:`, err);
+    }
+
+    const managed = this.views.get(accountId);
+    if (!managed) {
+      return this.activateAccount(accountId);
+    }
+
+    this.emitStatus(accountId, 'loading');
+    const currentUrl = managed.view.webContents.getURL();
+    if (!currentUrl || currentUrl === 'about:blank') {
+      managed.view.webContents.loadURL(account.url).catch((err: unknown) => {
+        log(`[hard-reload] loadURL failed for ${accountId}:`, err);
+      });
+    } else {
+      managed.view.webContents.reloadIgnoringCache();
+    }
+    log(`[hard-reload] ${accountId}`);
+    return true;
+  }
+
+  public async hardReloadAllLoaded(): Promise<number> {
+    const loadedIds = [...this.views.keys()];
+    let count = 0;
+    for (const accountId of loadedIds) {
+      if (await this.hardReloadAccount(accountId)) count++;
+    }
+    return count;
   }
 
   /**

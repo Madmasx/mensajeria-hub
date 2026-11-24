@@ -148,6 +148,14 @@
           Solo se conceden a <code>web.whatsapp.com</code> y <code>web.telegram.org</code>. El resto
           de permisos del navegador sigue bloqueado.
         </p>
+        <div class="settings-refresh-actions">
+          <button type="button" class="btn btn-secondary" id="btn-refresh-active">Actualizar cuenta activa</button>
+          <button type="button" class="btn btn-secondary" id="btn-refresh-all">Actualizar todas</button>
+        </div>
+        <p class="form-hint">
+          Limpia caché y recarga sin cerrar sesión (útil si las llamadas se traban). Atajos:
+          <code>Ctrl+R</code> recarga rápida · <code>Ctrl+Shift+R</code> forzar recarga.
+        </p>
       </div>
       <div class="shortcuts-guide">
         <h4>Atajos de teclado</h4>
@@ -208,6 +216,7 @@
     <div class="modal-content">
       <h3 id="menu-title">Opciones</h3>
       <div class="menu-actions-list">
+        <button type="button" class="btn btn-menu" id="menu-btn-reload">Actualizar cuenta (limpiar caché)</button>
         <button type="button" class="btn btn-menu" id="menu-btn-edit">Renombrar / Editar</button>
         <button type="button" class="btn btn-menu" id="menu-btn-move-up">Mover hacia arriba</button>
         <button type="button" class="btn btn-menu" id="menu-btn-move-down">Mover hacia abajo</button>

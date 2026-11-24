@@ -249,6 +249,17 @@ function handleShortcuts(input: Electron.Input): boolean {
     return true;
   }
 
+  if (config.activeAccount) {
+    if (bindingMatches(input, 'Ctrl+Shift+R') || bindingMatches(input, 'Ctrl+F5')) {
+      void viewManager?.hardReloadAccount(config.activeAccount);
+      return true;
+    }
+    if (bindingMatches(input, 'Ctrl+R') || bindingMatches(input, 'F5')) {
+      viewManager?.reloadAccount(config.activeAccount);
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -713,6 +724,9 @@ function setupIpc(): void {
         if (Number.isFinite(minutes)) {
           config.suspendAfterMinutes = Math.min(120, Math.max(1, Math.round(minutes)));
         }
+        const prevMic = config.allowMicrophone;
+        const prevCam = config.allowCamera;
+
         if (typeof data?.closeToTray === 'boolean') config.closeToTray = data.closeToTray;
         if (typeof data?.allowMicrophone === 'boolean') config.allowMicrophone = data.allowMicrophone;
         if (typeof data?.allowCamera === 'boolean') config.allowCamera = data.allowCamera;
@@ -726,6 +740,14 @@ function setupIpc(): void {
         saveConfig(config);
         viewManager?.updateConfig(config);
         updateTray();
+
+        if (
+          (prevMic !== config.allowMicrophone || prevCam !== config.allowCamera) &&
+          config.activeAccount
+        ) {
+          void viewManager?.hardReloadAccount(config.activeAccount);
+        }
+
         return { ok: true as const, config };
       } catch (err) {
         return fail(err);
@@ -747,6 +769,14 @@ function setupIpc(): void {
   ipcMain.handle('app:reload-account', (_event, accountId: string) => {
     viewManager?.reloadAccount(accountId);
     return true;
+  });
+
+  ipcMain.handle('app:hard-reload-account', async (_event, accountId: string) => {
+    return viewManager ? viewManager.hardReloadAccount(accountId) : false;
+  });
+
+  ipcMain.handle('app:hard-reload-all', async () => {
+    return viewManager ? viewManager.hardReloadAllLoaded() : 0;
   });
 
   // Used by the "Creado por" credit in Ajustes. Only http(s) is allowed.
